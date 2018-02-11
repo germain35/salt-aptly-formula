@@ -1,0 +1,40 @@
+{%- from "aptly/map.jinja" import aptly with context -%}
+{%- if aptly.repos|default(False) %}
+repo:
+{%- for repo, params in aptly.repos.iteritems() %}
+  {{ repo }}:
+    component: {{ params.publisher.component }}
+    distributions:
+      {%- for distribution in params.publisher.distributions %}
+      - {{ distribution }}
+      {%- endfor %}
+    {%- if params.publisher.architectures is defined %}
+    architectures:
+      {%- for arch in params.publisher.architectures %}
+      - {{ arch }}
+      {%- endfor %}
+    {%- endif %}
+{%- endfor %}
+{%- else %}
+repo: {}
+{%- endif %}
+
+{%- if aptly.mirrors|default(False) %}
+mirror:
+{%- for mirror, params in aptly.mirrors.iteritems() %}
+  {{ mirror }}:
+    component: {{ params.publisher.component }}
+    distributions:
+      {%- for distribution in params.publisher.distributions %}
+      - {{ distribution }}
+      {%- endfor %}
+    {%- if params.publisher.architectures is defined %}
+    architectures:
+      {%- for arch in params.publisher.architectures %}
+      - {{ arch }}
+      {%- endfor %}
+    {%- endif %}
+{%- endfor %}
+{%- else %}
+mirror: {}
+{%- endif %}

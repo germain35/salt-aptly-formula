@@ -1,0 +1,4 @@
+{%- from "aptly/map.jinja" import aptly with context -%}
+COMMAND={{ aptly.bin }}
+LISTEN_HOST={{ aptly.api.bind.host }}
+LISTEN_PORT={{ aptly.api.bind.port }}

@@ -1,0 +1,35 @@
+aptly:
+  manage_user: True
+  manage_gpg: True
+  secure: True
+  gpg:
+    public_key:
+    private_key:
+    keypair_id: 
+    passphrase:
+    fingerprint
+    trust_level: ultimately
+  api:
+    service:
+      enabled: True
+  publisher:
+    pip_install: True
+  mirror_update:
+      enabled: True
+      http_proxy: "http://1.2.3.4:8000"
+      https_proxy: "http://1.2.3.4:8000"
+  mirrors:
+    mirror_name:
+      source: http://example.com/debian
+      distribution: xenial
+      components: main
+      architectures: amd64
+      gpgkeys: 
+        - 460F3999
+      filter: 
+        - "!(Name (% *-dbg))"
+      publisher:
+        component: example
+        distributions:
+          - xenial/repo/nightly
+          - "s3:aptcdn:xenial/repo/nightly"

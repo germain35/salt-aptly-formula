@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+
+{%- set os         = salt['grains.get']('os') %}
+{%- set osrelease  = salt['grains.get']('osrelease') %}
+{%- set oscodename = salt['grains.get']('oscodename') %}
+
+{## Start with defaults from defaults.yaml ##}
+{% import_yaml 'aptly/defaults.yaml' as default_settings %}
+
+{##
+Setup variables using grains['os_family'] based logic, only add key:values
+that differ from what is in defaults.yaml
+##}
+{% set os_family_map = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['aptly', 'bzip2', 'cron'],
+        'publisher_pkgs': ['aptly-publisher'],
+        'bin': '/usr/bin/aptly',
+        'home_dir': '/var/lib/aptly',
+        'root_dir': '/srv/aptly',
+        'user': 'aptly',
+        'group': 'aptly',
+        'publisher_conf_file': '/etc/aptly-publisher.yaml',
+    },
+}
+, grain="os_family"
+, merge=salt['pillar.get']('aptly:lookup')) %}
+
+{## Merge the flavor_map to the default settings ##}
+{% do default_settings.aptly.update(os_family_map) %}
+
+{## Merge in aptly:lookup pillar ##}
+{% set aptly = salt['pillar.get'](
+        'aptly',
+        default=default_settings.aptly,
+        merge=True
+    )
+%}

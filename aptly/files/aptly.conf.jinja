@@ -1,0 +1,47 @@
+{%- from "aptly/map.jinja" import aptly with context %}
+{
+  "rootDir": "{{ aptly.root_dir }}",
+  "downloadConcurrency": 4,
+  "architectures": [ {% for arch in aptly.architectures|default([]) %}"{{ arch }}"{% if not loop.last %},{% endif %}{% endfor %} ],
+  "dependencyFollowSuggests": {{ aptly.dependency.follow_suggests|lower }},
+  "dependencyFollowRecommends": {{ aptly.dependency.follow_recommends|lower }},
+  "dependencyFollowAllVariants": {{ aptly.dependency.follow_all_variants|lower }},
+  "dependencyFollowSource": {{ aptly.dependency.follow_source|lower }},
+  {%- if aptly.endpoint is defined %}
+  "S3PublishEndpoints": {
+    {%- for name, endpoint in aptly.endpoint.iteritems() %}
+    {%- if endpoint.engine == 's3' %}
+    "{{ name }}": {
+      {%- for key, value in endpoint.iteritems() %}
+      "{{ key }}": "{{ value }}"{% if not loop.last %},{% endif %}
+      {%- endfor %}
+    }
+    {%- endif %}
+    {%- endfor %}
+  },
+  "SwiftPublishEndpoints": {
+    {%- for name, endpoint in aptly.endpoint.iteritems() %}
+    {%- if endpoint.engine == 'swift' %}
+    "{{ name }}": {
+      {%- for key, value in endpoint.iteritems() %}
+      "{{ key }}": "{{ value }}"{% if not loop.last %},{% endif %}
+      {%- endfor %}
+    }
+    {%- endif %}
+    {%- endfor %}
+  },
+  {%- endif %}
+  {%- if aptly.secure %}
+  "gpgDisableSign": {{ aptly.gpg.disable_sign|default(False)|lower }},
+  "gpgDisableVerify": {{ aptly.gpg.disable_verify|default(False)|lower }},
+  {%- else %}
+  "gpgDisableSign": {{ aptly.gpg.disable_sign|default(True)|lower }},
+  "gpgDisableVerify": {{ aptly.gpg.disable_verify|default(True)|lower }},
+  {%- endif %}
+  "downloadSourcePackages": false,
+  "ppaDistributorID": "ubuntu",
+  "ppaCodename": ""
+}
+{#-
+vim: syntax=jinja
+-#}
