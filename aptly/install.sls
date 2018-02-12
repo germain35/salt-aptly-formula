@@ -126,7 +126,7 @@ aptly_gpg_trust_key:
   module.run:
     - gpg.trust_key:
       - user: {{ aptly.user }}
-      - keyid: {{ aptly.gpg.id }}
+      - keyid: {{ aptly.gpg.keypair_id }}
       {%- if aptly.gpg.fingerprint is defined %}
       - fingerprint: {{ aptly.gpg.fingerprint }}
       {%- endif %}

@@ -36,21 +36,16 @@ aptly_mirror_update_cron:
   
   {%- if params.gpg_keys is defined %}
 gpg_import_keys_{{mirror}}:
-  module.run:
-    - gpg.import_key:
-      - user: {{ aptly.user }}
-      {%- if aptly.gpg.homedir is defined %}
-      - gnupghome: {{ aptly.gpg.homedir }}
-      {%- endif %}
-      - keyserver: {{ aptly.gpg.keyserver }}
-      - keys: {{ params.gpgkeys }}
-      - require_in:
-        - cmd: aptly_mirror_{{mirror}}
+  cmd.run:
+    - name: gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ params.gpg_keys | join(' ') }}
+    - runas: {{ aptly.user }}
+    - require_in:
+      - cmd: aptly_mirror_{{mirror}}
   {%- endif %}
 
 aptly_mirror_{{mirror}}:
   cmd.run:
-    - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filter') %}-filter="{{ params.filter|join(' | ') }}" {% endif %}-architectures={{ params.architectures }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.components }}
+    - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filter') %}-filter="{{ params.filter|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.components|join(' ') }}
     - user: {{ aptly.user }}
     - unless: aptly mirror show {{ mirror }}
 
@@ -76,7 +71,7 @@ aptly_addsnapshot_{{mirror}}_{{snapshot}}:
   {%- if mirror.publish is defined %}
 aptly_publish_{{ aptly.mirror[mirror_name].publish }}_snapshot:
   cmd.run:
-    - name: aptly publish snapshot -batch=true -gpg-key='{{ aptly.gpg.keypair_id }}' -passphrase='{{ aptly.gpg.passphrase }}' {{ params.publish }}
+    - name: aptly publish snapshot -batch=true -gpg-key='{{ aptly.gpg.keypair_id }}' {% if aptly.gpg.get('passphrase', False) %}-passphrase='{{ aptly.gpg.passphrase }}' {% endif %}{{ params.publish }}
     - user: {{ aptly.user }}
   {%- endif %}
 

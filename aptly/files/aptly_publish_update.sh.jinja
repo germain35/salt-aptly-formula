@@ -1,3 +1,4 @@
+{%- from "aptly/map.jinja" import aptly with context -%}
 #!/bin/bash
 CLEANUP=0
 VERBOSE=0
@@ -7,19 +8,12 @@ FORCE_OVERWRITE=0
 PUBLISHER_OPTIONS=""
 
 log_info() {
-    logger -p user.info -t ${SCRIPT} "$*"
     [ $VERBOSE -eq 1 ] && echo "[INFO] $*"
 }
 
 log_error() {
-    logger -p user.error -t ${SCRIPT} "$*"
     echo "[ERROR] $*" >&2
 }
-
-at_exit() {
-    pgrep -f "aptly api serve" | xargs kill -15
-}
-trap at_exit EXIT
 
 while getopts "a?c?f?r?v?"  option
 do
@@ -43,10 +37,10 @@ if [[ $FORCE_OVERWRITE -eq 1 ]]; then
      PUBLISHER_OPTIONS+=" --force-overwrite"
 fi
 
-aptly-publisher --timeout=1200 publish -v -c /etc/aptly-publisher.yaml --url http://127.0.0.1:8080 --architectures amd64 $PUBLISHER_OPTIONS
+aptly-publisher --timeout 1200 publish -v -c {{aptly.publisher_conf_file}} --url http://127.0.0.1:{{aptly.api.bind.port}} --architectures amd64 $PUBLISHER_OPTIONS
 
 if [[ $? -ne 0 ]]; then
-    echo "Aptly Publisher failed."
+    log_error "Aptly Publisher failed."
     exit 1
 fi
 

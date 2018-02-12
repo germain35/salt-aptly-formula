@@ -1,5 +1,4 @@
 {%- from "aptly/map.jinja" import aptly with context -%}
-{%- set command="{{ aptly.bin }}" -%}
 [Unit]
 Description=Aptly API server
 Requires=network-online.target
@@ -8,7 +7,7 @@ After=network.target
 [Service]
 User=aptly
 EnvironmentFile=/etc/default/aptly-api
-ExecStart={{ command }} api serve -listen=${LISTEN_HOST}:${LISTEN_PORT} -no-lock
+ExecStart={{ aptly.bin }} api serve -listen=${LISTEN_HOST}:${LISTEN_PORT} -no-lock
 Restart=on-failure
 
 [Install]

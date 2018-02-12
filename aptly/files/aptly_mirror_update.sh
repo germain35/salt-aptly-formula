@@ -6,14 +6,13 @@ MAXTRIES=3
 VERBOSE=0
 SNAPSHOT=0
 MIRROR=""
+TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 
 log_info() {
-    logger -p user.info -t ${SCRIPT} "$*"
     [ $VERBOSE -eq 1 ] && echo "[INFO] $*"
 }
 
 log_error() {
-    logger -p user.error -t ${SCRIPT} "$*"
     echo "[ERROR] $*" >&2
 }
 
@@ -39,7 +38,7 @@ update_mirror() {
         else
             log_info "Synced mirror ${1}"
             if [[ $SNAPSHOT -eq 1 ]]; then
-                snapshot_name="${1}-$(date +%s)"
+                snapshot_name="${1}-$TIMESTAMP"
                 if [[ $VERBOSE -eq 0 ]]; then
                     out=$(aptly snapshot create ${snapshot_name} from mirror ${1} >/dev/null 2>&1)
                 else

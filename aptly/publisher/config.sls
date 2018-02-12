@@ -6,7 +6,7 @@ include:
 publisher_yaml:
   file.managed:
     - name: {{ aptly.publisher_conf_file }}
-    - source: salt://aptly/files/aptly-publisher.yaml
+    - source: salt://aptly/files/aptly-publisher.yaml.jinja
     - template: jinja
     - user: root
     - group: root
