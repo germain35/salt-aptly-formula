@@ -46,14 +46,14 @@ gpg_import_keys_{{mirror}}:
 aptly_mirror_{{mirror}}:
   cmd.run:
     - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filter') %}-filter="{{ params.filter|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.components|join(' ') }}
-    - user: {{ aptly.user }}
+    - runas: {{ aptly.user }}
     - unless: aptly mirror show {{ mirror }}
 
   {%- if params.get('update', False) == True %}
 aptly_mirror_update_{{mirror}}:
   cmd.run:
     - name: aptly mirror update {{ mirror }}
-    - user: {{ aptly.user }}
+    - runas: {{ aptly.user }}
     - require:
       - cmd: aptly_mirror_{{mirror}}
   {%- endif %}
@@ -62,7 +62,7 @@ aptly_mirror_update_{{mirror}}:
 aptly_addsnapshot_{{mirror}}_{{snapshot}}:
   cmd.run:
     - name: aptly snapshot create {{ snapshot }} from mirror {{ mirror }}
-    - user: {{ aptly.user }}
+    - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot }}
     - require:
       - cmd: aptly_mirror_update_{{mirror}}
