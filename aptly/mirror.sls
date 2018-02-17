@@ -34,11 +34,12 @@ aptly_mirror_update_cron:
 
 {%- for mirror, params in aptly.get('mirrors', {}).iteritems() %}
   
-  {%- if params.gpg_keys is defined %}
+  {%- for gpg_key in params.get('gpg_keys', []) %}
 gpg_import_keys_{{mirror}}:
   cmd.run:
-    - name: gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ params.gpg_keys | join(' ') }}
+    - name: gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ gpg_key }}
     - runas: {{ aptly.user }}
+    - unless: gpg --no-default-keyring --keyring trustedkeys.gpg {{ gpg_key }}
     - require_in:
       - cmd: aptly_mirror_{{mirror}}
   {%- endif %}
