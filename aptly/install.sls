@@ -24,6 +24,7 @@ aptly_user:
   user.present:
     - name: {{ aptly.user }}
     - home: {{ aptly.home_dir }}
+    - shell: /bin/bash
     - system: True
     - groups:
       - {{ aptly.group }}
