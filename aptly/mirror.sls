@@ -39,7 +39,7 @@ gpg_import_key_{{mirror}}_{{gpg_key}}:
   cmd.run:
     - name: gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ gpg_key }}
     - runas: {{ aptly.user }}
-    - unless: gpg --no-default-keyring --keyring trustedkeys.gpg {{ gpg_key }}
+    - unless: gpg --no-default-keyring --keyring trustedkeys.gpg -k {{ gpg_key }}
     - require_in:
       - cmd: aptly_mirror_{{mirror}}
   {%- endfor %}
