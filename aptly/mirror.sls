@@ -46,7 +46,7 @@ gpg_import_key_{{mirror}}_{{gpg_key}}:
 
 aptly_mirror_{{mirror}}:
   cmd.run:
-    - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filter') %}-filter="{{ params.filter|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.components|join(' ') }}
+    - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filters') %}-filter="{{ params.filters|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.components|join(' ') }}
     - runas: {{ aptly.user }}
     - unless: aptly mirror show {{ mirror }}
 
@@ -58,16 +58,6 @@ aptly_mirror_update_{{mirror}}:
     - require:
       - cmd: aptly_mirror_{{mirror}}
   {%- endif %}
-
-  {%- for snapshot in params.get('snapshots', []) %}
-aptly_addsnapshot_{{mirror}}_{{snapshot}}:
-  cmd.run:
-    - name: aptly snapshot create {{ snapshot }} from mirror {{ mirror }}
-    - runas: {{ aptly.user }}
-    - unless: aptly snapshot show {{ snapshot }}
-    - require:
-      - cmd: aptly_mirror_update_{{mirror}}
-  {%- endfor %}
 
   {%- if mirror.publish is defined %}
 aptly_publish_{{ aptly.mirror[mirror_name].publish }}_snapshot:

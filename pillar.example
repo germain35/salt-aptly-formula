@@ -26,7 +26,7 @@ aptly:
       architectures: amd64
       gpgkeys: 
         - 460F3999
-      filter: 
+      filters: 
         - "!(Name (% *-dbg))"
       publisher:
         component: example
