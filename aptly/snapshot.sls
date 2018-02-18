@@ -27,7 +27,7 @@ aptly_snapshot_{{snapshot_name}}:
   {%- elif params.sources is defined %}  
 aptly_snapshot_{{snapshot_name}}:
   cmd.run:
-    - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {% for source in param.sources %}{{ source }}-{{current_date}} {% endfor %}
+    - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {% for source in params.sources %}{{ source }}-{{current_date}} {% endfor %}
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
   {%- endif %}
