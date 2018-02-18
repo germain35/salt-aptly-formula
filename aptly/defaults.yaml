@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
 aptly:
+  manage_repo: False
   manage_user: True
   manage_gpg: True
   secure: False

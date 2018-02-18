@@ -22,6 +22,13 @@ that differ from what is in defaults.yaml
         'user': 'aptly',
         'group': 'aptly',
         'publisher_conf_file': '/etc/aptly-publisher.yaml',
+        'repo': {
+            'humanname': 'aptly',
+            'name': 'deb http://repo.aptly.info/ ' ~ oscodename|lower ~ ' main',
+            'file': '/etc/apt/sources.list.d/aptly.list',
+            'keyserver': 'hkp://pgp.mit.edu:80',
+            'keyid': '9E3E53F19C7DE460',
+        },
     },
 }
 , grain="os_family"

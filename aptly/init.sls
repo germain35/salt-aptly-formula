@@ -1,6 +1,9 @@
 {%- from "aptly/map.jinja" import aptly with context %}
 
 include:
+  {%- if aptly.manage_repo %}
+  - aptly.repo
+  {%- endif %}
   - aptly.install
   - aptly.config
   - aptly.service

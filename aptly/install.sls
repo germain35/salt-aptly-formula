@@ -1,9 +1,18 @@
 {%- from "aptly/map.jinja" import aptly with context %}
 
+{%- if aptly.manage_repo %}
+include:
+  - aptly.repo
+{%- endif %}
+
 aptly_packages:
   pkg.installed:
     - pkgs: {{ aptly.pkgs }}
     - refresh: True
+    {%- if aptly.manage_repo %}
+    - require:
+      - sls: aptly.repo
+    {%- endif %}
 
 aptly_mirror_update_script:
   file.managed:
