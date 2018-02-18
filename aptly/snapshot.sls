@@ -10,11 +10,7 @@ include:
   {%- set name   = snapshot['name'] if snapshot is mapping else snapshot[0] %}
   {%- set params = snapshot if snapshot is mapping else snapshot[1] %}
 
-  {%- if params.suffix is defined %}
-    {%- set snapshot_name =  name + '-' + suffix %}
-  {%- else %}
-    {%- set snapshot_name =  name + '-' + current_date %}
-  {%- endif %}
+  {%- set snapshot_name =  name + '-' + current_date %}
 
   {%- if params.mirror is defined %}
 aptly_snapshot_{{snapshot_name}}:
@@ -22,16 +18,16 @@ aptly_snapshot_{{snapshot_name}}:
     - name: aptly snapshot create {{ snapshot_name }} from mirror {{ params.mirror }}
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
-  {%- elif params.filters is defined and params.sources is defined %}
+  {%- elif params.filters is defined and params.source is defined %}
 aptly_snapshot_{{snapshot_name}}:
   cmd.run:
-    - name: aptly snapshot filter {{ params.sources }} {{ snapshot_name }} "{{ filters|join(' | ') }}"
+    - name: aptly snapshot filter {{ params.source }}-{{current_date}} {{ snapshot_name }} "{{ filters|join(' | ') }}"
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
-  {%- elif params.sources is defined %}
+  {%- elif params.sources is defined %}  
 aptly_snapshot_{{snapshot_name}}:
   cmd.run:
-    - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {{ params.sources|join(' ') }}
+    - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {% for source in param.sources %}{{ source }}-{{current_date}} {% endfor %}
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
   {%- endif %}
