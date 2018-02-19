@@ -11,4 +11,5 @@ publisher_yaml:
     - user: root
     - group: root
     - mode: 664
+    - makedirs: True
 
