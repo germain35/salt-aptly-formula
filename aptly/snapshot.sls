@@ -29,7 +29,7 @@ aptly_snapshot_{{snapshot_name}}:
   {%- elif params.filters is defined and params.source is defined %}
 aptly_snapshot_{{snapshot_name}}:
   cmd.run:
-    - name: aptly snapshot filter {{ params.source }}-{{current_date}} {{ snapshot_name }} "{{ params.filters|join(' | ') }}"
+    - name: aptly snapshot filter {% if params.get('deps', False) %}-with-deps {% endif %}{{ params.source }}-{{current_date}} {{ snapshot_name }} "{{ params.filters|join(' | ') }}"
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
   {%- elif params.sources is defined %}
