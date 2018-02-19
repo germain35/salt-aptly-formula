@@ -2,7 +2,7 @@
 {
   "rootDir": "{{ aptly.root_dir }}",
   "downloadConcurrency": 4,
-  "architectures": [ {% for arch in aptly.architectures|default([]) %}"{{ arch }}"{% if not loop.last %},{% endif %}{% endfor %} ],
+  "architectures": [{% for arch in aptly.architectures|default(['amd64']) %}"{{ arch }}"{% if not loop.last %},{% endif %}{% endfor %}],
   "dependencyFollowSuggests": {{ aptly.dependency.follow_suggests|lower }},
   "dependencyFollowRecommends": {{ aptly.dependency.follow_recommends|lower }},
   "dependencyFollowAllVariants": {{ aptly.dependency.follow_all_variants|lower }},
