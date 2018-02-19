@@ -11,7 +11,7 @@ aptly:
     follow_all_variants: False
     follow_source: False
   gpg:
-    keyserver: 'hkp://pgp.mit.edu:80'
+    keyserver: 'hkp://keys.gnupg.net:80'
   mirror_update:
     enabled: False
   publisher:
