@@ -109,7 +109,7 @@ aptly_gpg_pub_key:
     - require:
       - file: aptly_gpg_key_dir
 
-aptly_gpg_import_priv_key:
+aptly_gpg_import_key:
   module.run:
     - gpg.import_key:
       - user: {{ aptly.user }}
@@ -119,17 +119,6 @@ aptly_gpg_import_priv_key:
       - filename: {{ gpgprivfile }}
     - require:
       - file: aptly_gpg_priv_key
-
-aptly_gpg_import_pub_key:
-  module.run:
-    - gpg.import_key:
-      - user: {{ aptly.user }}
-      {%- if aptly.gpg.homedir is defined %}
-      - gnupghome: {{ aptly.gpg.homedir }}
-      {%- endif %}
-      - filename: {{ gpgpubfile }}
-    - require:
-      - file: aptly_gpg_pub_key
 
   {%- if aptly.gpg.trust_level is defined %}
 aptly_gpg_trust_key:
@@ -143,9 +132,8 @@ aptly_gpg_trust_key:
       {%- endif %}
       - trust_level: {{ aptly.gpg.trust_level }}
     - require:
-      - module: aptly_gpg_import_priv_key
+      - module: aptly_gpg_import_key
   {%- endif %}
-
 
 {%- endif %}
 
