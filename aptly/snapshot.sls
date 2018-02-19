@@ -7,8 +7,16 @@ include:
 
 {%- for snapshot in aptly.get('snapshots', []) %}
   
-  {%- set name   = snapshot['name'] if snapshot is mapping else snapshot[0] %}
-  {%- set params = snapshot if snapshot is mapping else snapshot[1] %}
+  {%- if snapshot is mapping %}
+    {%- set name   = snapshot['name'] %}
+    {%- set params = snapshot %}
+  {%- elif snapshot is list %}
+    {%- set name   = snapshot[0] %}
+    {%- set params = snapshot[1] %}
+  {%- else %}
+    {%- set name   = snapshot %}
+    {%- set params = {} %}
+  {%- endif %}
 
   {%- set snapshot_name =  name + '-' + current_date %}
 
@@ -24,13 +32,17 @@ aptly_snapshot_{{snapshot_name}}:
     - name: aptly snapshot filter {{ params.source }}-{{current_date}} {{ snapshot_name }} "{{ params.filters|join(' | ') }}"
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
-  {%- elif params.sources is defined %}  
+  {%- elif params.sources is defined %}
 aptly_snapshot_{{snapshot_name}}:
   cmd.run:
     - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {% for source in params.sources %}{{ source }}-{{current_date}} {% endfor %}
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
+  {%- else %}
+aptly_snapshot_{{snapshot_name}}:
+  cmd.run:
+    - name: aptly snapshot create {{ snapshot_name }} from mirror {{ name }}
+    - runas: {{ aptly.user }}
+    - unless: aptly snapshot show {{ snapshot_name }}
   {%- endif %}
 {%- endfor %}
-
-
