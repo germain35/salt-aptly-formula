@@ -8,8 +8,8 @@ include:
 {%- for snapshot in aptly.get('snapshots', []) %}
   
   {%- if snapshot is mapping %}
-    {%- set name   = snapshot['name'] %}
-    {%- set params = snapshot %}
+    {%- set name   = snapshot.keys()[0] %}
+    {%- set params = snapshot.values()[0] %}
   {%- elif snapshot is list %}
     {%- set name   = snapshot[0] %}
     {%- set params = snapshot[1] %}
