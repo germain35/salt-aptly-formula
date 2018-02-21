@@ -25,12 +25,16 @@ aptly_api_conf:
 
 {% if aptly.snapshots is defined and aptly.snapshots is list %}
 aptly_snpashots_conf:
-  file.managed:
+  file.serialize:
     - name: {{ aptly.snapshots_conf_file }}
-    - contents: {{ {'snapshots': aptly.snapshots}|yaml }}
+    - dataset:
+        snapshots:
+          {{aptly.snapshots|yaml}}
+    - formatter: yaml
     - user: {{ aptly.user }}
     - group: {{ aptly.group }}
     - mode: 644
+    - makedirs: True
 {%- endif %}
 
 
