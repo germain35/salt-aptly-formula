@@ -1,0 +1,110 @@
+{%- from "aptly/map.jinja" import aptly with context -%}
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import logging
+import getopt
+import sys
+import time
+import subprocess
+import os
+import shutil
+import yaml
+
+logging_format = '%(levelname)-8s %(message)s'
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=logging_format)
+logger = logging.getLogger('aptly')
+
+cwd              = os.path.dirname(os.path.abspath(__file__))
+config           = '{{aptly.update_conf_file}}'
+snapshot_enabled = False
+publish_enabled  = False
+cleanup_enabled  = False
+
+opts, args = getopt.getopt(sys.argv[1:], "c:spr", ["config=", "snapshot", "publish", "cleanup"])
+for opt, arg in opts:
+    if opt in ("-c", "--config"):
+        config = arg
+    elif opt in ("-s", "--snapshot"):
+        snapshot_enabled = True
+    elif opt in ("-p", "--publish"):
+        publish_enabled = True
+    elif opt in ("-r", "--cleanup"):
+        cleanup_enabled = True
+
+try:
+  with open(config, 'r') as stream:
+    settings = yaml.load(stream)
+except IOError as e: 
+    logger.error("Error reading config file: %s" % (config))
+    print(e)
+    sys.exit(1)
+
+try:
+    mirrors = subprocess.check_output("aptly mirror list --raw 2>&1", shell=True).splitlines()
+except subprocess.CalledProcessError as e:
+    logger.error("Failed to retrieve mirrors")
+    print(e)
+    sys.exit(1)
+
+for mirror in mirrors:
+    logger.info('Starting update of mirror %s' % (mirror))
+    try:
+        subprocess.call("aptly mirror update -force=true %s" % (mirror), shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.error("Failed to update mirror %s" % (mirror))
+        print(e)
+        sys.exit(1)
+
+
+if snapshot_enabled:
+    current_date = time.strftime("%Y%m%d%H%M%S")
+    for snapshot in settings['snapshots']:
+        if type(snapshot) is dict:
+            name   = snapshot.keys()[0]
+            params = snapshot.values()[0]
+        else:
+            name   = snapshot
+            params = {}
+
+        timestamp_name = "%s-%s" % (name, current_date)
+
+        try:
+            logger.info("Create snapshot %s" % (timestamp_name))
+            if 'mirror' in params.keys(): 
+                subprocess.call("aptly snapshot create %s from mirror %s" % (timestamp_name, params['mirror']), shell=True)
+            elif 'filters' in params.keys() and 'source' in params.keys():
+                if 'deps' in params.keys() and params['deps']:
+                    subprocess.call("aptly snapshot filter -with-deps %s %s '%s'" % ("%s-%s" % (params['source'], current_date), timestamp_name, ' | '.join(params['filters'])), shell=True)
+                else:
+                    subprocess.call("aptly snapshot filter %s %s '%s'" % ("%s-%s" % (params['source'], current_date), timestamp_name, ' | '.join(params['filters'])), shell=True)
+            elif 'merge' in params.keys():
+                if 'latest' in params.keys() and params['latest']:
+                    subprocess.call("aptly snapshot merge -latest %s %s" % (timestamp_name, ' '.join(['%s-%s' % (x, current_date) for x in params['merge']])), shell=True)
+                else:
+                    subprocess.call("aptly snapshot merge %s %s" % (timestamp_name, ' '.join(['%s-%s' % (x, current_date) for x in params['merge']])), shell=True)
+            else:
+                subprocess.call("aptly snapshot create %s from mirror %s" % (timestamp_name, name), shell=True)
+        except subprocess.CalledProcessError as e:
+            logger.error("Failed to create snapshot %s" % (timestamp_name))
+            print(e)
+            sys.exit(1)
+
+
+if publish_enabled:
+    logger.info("Publish")
+    try:
+        subprocess.call("aptly-publisher --timeout 1200 -v --url http://127.0.0.1:{{aptly.api.bind.port}} --architectures amd64 -- publish", shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.error("Failed to publish")
+        print(e)
+        sys.exit(1)
+
+if cleanup_enabled:
+    logger.info('Cleanup')
+    try:
+        subprocess.call("aptly-publisher -v --url http://127.0.0.1:{{aptly.api.bind.port}} cleanup", shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.error("Failed to cleanup")
+        print(e)
+        sys.exit(1)

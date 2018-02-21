@@ -16,8 +16,8 @@ aptly_packages:
 
 aptly_update_script:
   file.managed:
-    - name: /usr/local/bin/aptly_update.sh
-    - source: salt://aptly/files/aptly_update.sh
+    - name: /usr/local/bin/aptly_update.py
+    - source: salt://aptly/files/aptly_update.py
     - user: {{ aptly.user }}
     - group: {{ aptly.group }}
     - mode: 755

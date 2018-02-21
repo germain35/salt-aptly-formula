@@ -23,25 +23,23 @@ aptly_api_conf:
     - mode: 644
     - template: jinja
 
-{% if aptly.snapshots is defined and aptly.snapshots is list %}
-aptly_snpashots_conf:
+aptly_update_conf:
   file.serialize:
-    - name: {{ aptly.snapshots_conf_file }}
+    - name: {{ aptly.update_conf_file }}
     - dataset: 
-        snapshots: {{aptly.snapshots}}
+        snapshots: {{aptly.get('snapshots', [])}}
     - formatter: yaml
     - user: {{ aptly.user }}
     - group: {{ aptly.group }}
     - mode: 644
     - makedirs: True
-{%- endif %}
 
 
 {%- if aptly.cron.enabled %}
 
 aptly_cron:
   cron.present:
-    - name: "/usr/local/bin/aptly_update.sh -s"
+    - name: "/usr/local/bin/aptly_update.py -s -p -r > /var/log/aptly_update.log 2>&1"
     - identifier: aptly_update
     - hour: "{{ aptly.cron.hour }}"
     - minute: "{{ aptly.cron.minute }}"
