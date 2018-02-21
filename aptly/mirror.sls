@@ -4,14 +4,14 @@ include:
   - aptly.install
   - aptly.config
 
-{%- if aptly.mirror_update.enabled %}
+{%- if aptly.update.mirror.enabled %}
 
 aptly_mirror_update_cron:
   cron.present:
-    - name: "{% if aptly.mirror_update.http_proxy is defined %}export http_proxy={{ aptly.mirror_update.http_proxy }}; {% endif %}{% if aptly.mirror_update.https_proxy is defined %}export https_proxy={{ aptly.mirror_update.https_proxy }}; {% endif %}/usr/local/bin/aptly_mirror_update.sh -s"
+    - name: "/usr/local/bin/aptly_mirror_update.sh -s"
     - identifier: aptly_mirror_update
-    - hour: "{{ aptly.mirror_update.hour }}"
-    - minute: "{{ aptly.mirror_update.minute }}"
+    - hour: "{{ aptly.update.mirror.hour }}"
+    - minute: "{{ aptly.update.mirror.minute }}"
     - user: {{ aptly.user }}
     - require:
       - file: aptly_mirror_update_script

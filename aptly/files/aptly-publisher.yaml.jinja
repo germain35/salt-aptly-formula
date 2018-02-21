@@ -35,6 +35,32 @@ mirror:
       {%- endfor %}
     {%- endif %}
 {%- endfor %}
+{%- for snapshot in aptly.get('snapshots', []) %}
+  {%- if snapshot is mapping %}
+    {%- set name   = snapshot['name'] %}
+    {%- set params = snapshot %}
+  {%- elif snapshot is list %}
+    {%- set name   = snapshot[0] %}
+    {%- set params = snapshot[1] %}
+  {%- else %}
+    {%- set name   = snapshot %}
+    {%- set params = {} %}
+  {%- endif %}
+  {%- if params.publisher is defined %}
+  {{ name }}:
+    component: {{ params.publisher.component }}
+    distributions:
+      {%- for distribution in params.publisher.distributions %}
+      - {{ distribution }}
+      {%- endfor %}
+    {%- if params.publisher.architectures is defined %}
+    architectures:
+      {%- for arch in params.publisher.architectures %}
+      - {{ arch }}
+      {%- endfor %}
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}
 {%- else %}
 mirror: {}
 {%- endif %}

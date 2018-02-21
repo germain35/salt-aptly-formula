@@ -1,0 +1,15 @@
+#!/bin/bash
+try=0
+retval=666
+SCRIPT=$(basename $0)
+MAXTRIES=3
+VERBOSE=0
+TIMESTAMP="$(date +%Y%m%d%H%M%S)"
+
+log_info() {
+    [ $VERBOSE -eq 1 ] && echo "[INFO] $*"
+}
+
+log_error() {
+    echo "[ERROR] $*" >&2
+}
