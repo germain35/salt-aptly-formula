@@ -17,7 +17,8 @@ aptly_packages:
 aptly_update_script:
   file.managed:
     - name: /usr/local/bin/aptly_update.py
-    - source: salt://aptly/files/aptly_update.py
+    - source: salt://aptly/files/aptly_update.py.jinja
+    - template: jinja
     - user: {{ aptly.user }}
     - group: {{ aptly.group }}
     - mode: 755
