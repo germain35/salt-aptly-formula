@@ -27,9 +27,8 @@ aptly_api_conf:
 aptly_snpashots_conf:
   file.serialize:
     - name: {{ aptly.snapshots_conf_file }}
-    - dataset:
-        snapshots:
-          {{aptly.snapshots|yaml}}
+    - dataset: 
+        snapshots: {{aptly.snapshots}}
     - formatter: yaml
     - user: {{ aptly.user }}
     - group: {{ aptly.group }}
