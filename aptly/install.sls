@@ -14,12 +14,12 @@ aptly_packages:
       - sls: aptly.repo
     {%- endif %}
 
-aptly_mirror_update_script:
+aptly_update_script:
   file.managed:
-    - name: /usr/local/bin/aptly_mirror_update.sh
-    - source: salt://aptly/files/aptly_mirror_update.sh
-    - user: root
-    - group: root
+    - name: /usr/local/bin/aptly_update.sh
+    - source: salt://aptly/files/aptly_update.sh
+    - user: {{ aptly.user }}
+    - group: {{ aptly.group }}
     - mode: 755
 
 {%- if aptly.manage_user %}

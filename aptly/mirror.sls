@@ -4,34 +4,6 @@ include:
   - aptly.install
   - aptly.config
 
-{%- if aptly.update.mirror.enabled %}
-
-aptly_mirror_update_cron:
-  cron.present:
-    - name: "/usr/local/bin/aptly_mirror_update.sh -s"
-    - identifier: aptly_mirror_update
-    - hour: "{{ aptly.update.mirror.hour }}"
-    - minute: "{{ aptly.update.mirror.minute }}"
-    - user: {{ aptly.user }}
-    - require:
-      - file: aptly_mirror_update_script
-      - user: aptly_user
-
-aptly_cron_path:
-  cron.env_present:
-    - name: PATH
-    - value: "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
-
-{%- else %}
-
-aptly_mirror_update_cron:
-  cron.absent:
-    - identifier: aptly_mirror_update
-    - user: {{ aptly.user }}
-
-{%- endif %}
-
-
 {%- for mirror, params in aptly.get('mirrors', {}).iteritems() %}
   
   {%- for gpg_key in params.get('gpg_keys', []) %}

@@ -32,3 +32,31 @@ aptly_snpashots_conf:
     - group: {{ aptly.group }}
     - mode: 644
 {%- endif %}
+
+
+{%- if aptly.cron.enabled %}
+
+aptly_cron:
+  cron.present:
+    - name: "/usr/local/bin/aptly_update.sh -s"
+    - identifier: aptly_update
+    - hour: "{{ aptly.cron.hour }}"
+    - minute: "{{ aptly.cron.minute }}"
+    - user: {{ aptly.user }}
+    - require:
+      - file: aptly_update_script
+      - user: aptly_user
+
+aptly_cron_path:
+  cron.env_present:
+    - name: PATH
+    - value: "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+
+{%- else %}
+
+aptly_cron:
+  cron.absent:
+    - identifier: aptly_update
+    - user: {{ aptly.user }}
+
+{%- endif %}

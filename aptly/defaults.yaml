@@ -12,11 +12,11 @@ aptly:
     follow_source: False
   gpg:
     keyserver: 'hkp://keys.gnupg.net:80'
-  update:
-    mirror:
-      enabled: False
-      hour: '01'
-      minute: '00'
+  cron:
+    enabled: False
+    snapshot: False
+    hour: '01'
+    minute: '00'
   publisher:
     enabled: True
     pip_install: False
