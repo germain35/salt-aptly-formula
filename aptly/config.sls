@@ -23,7 +23,7 @@ aptly_api_conf:
     - mode: 644
     - template: jinja
 
-{% if aptly.snapshots id defined and aptly.snapshots is list %}
+{% if aptly.snapshots is defined and aptly.snapshots is list %}
 aptly_snpashots_conf:
   file.managed:
     - name: {{ aptly.snapshots_conf_file }}
