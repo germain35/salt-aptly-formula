@@ -1,6 +1,8 @@
 aptly:
   manage_user: True
   manage_gpg: True
+  cron:
+    enabled: True
   secure: True
   gpg:
     public_key:
@@ -14,10 +16,6 @@ aptly:
       enabled: True
   publisher:
     pip_install: True
-  mirror_update:
-      enabled: True
-      http_proxy: "http://1.2.3.4:8000"
-      https_proxy: "http://1.2.3.4:8000"
   mirrors:
     mirror_name:
       source: http://example.com/debian
