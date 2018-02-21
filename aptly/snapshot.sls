@@ -32,10 +32,10 @@ aptly_snapshot_{{snapshot_name}}:
     - name: aptly snapshot filter {% if params.get('deps', False) %}-with-deps {% endif %}{{ params.source }}-{{current_date}} {{ snapshot_name }} "{{ params.filters|join(' | ') }}"
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
-  {%- elif params.sources is defined %}
+  {%- elif params.merge is defined %}
 aptly_snapshot_{{snapshot_name}}:
   cmd.run:
-    - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {% for source in params.sources %}{{ source }}-{{current_date}} {% endfor %}
+    - name: aptly snapshot merge {% if params.get('latest', False) %}-latest {% endif %}{{ snapshot_name }} {% for source in params.merge %}{{ source }}-{{current_date}} {% endfor %}
     - runas: {{ aptly.user }}
     - unless: aptly snapshot show {{ snapshot_name }}
   {%- else %}

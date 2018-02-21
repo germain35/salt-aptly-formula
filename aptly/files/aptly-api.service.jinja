@@ -5,8 +5,8 @@ Requires=network-online.target
 After=network.target
 
 [Service]
-User=aptly
-EnvironmentFile=/etc/default/aptly-api
+User={{ aptly.user }}
+EnvironmentFile={{ aptly.api_conf_file }}
 ExecStart={{ aptly.bin }} api serve -listen=${LISTEN_HOST}:${LISTEN_PORT} -no-lock
 Restart=on-failure
 
