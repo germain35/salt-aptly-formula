@@ -66,6 +66,15 @@ aptly_root_dir:
     - require:
       - user: aptly_user
 
+aptly_log_dir:
+  file.directory:
+    - name: {{ aptly.log_dir }}
+    - user: {{ aptly.user }}
+    - group: {{ aptly.group }}
+    - mode: 755
+    - require:
+      - user: aptly_user
+
 aptly_pub_dir:
   file.directory:
     - name: {{ aptly.root_dir }}/public

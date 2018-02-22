@@ -39,7 +39,7 @@ aptly_update_conf:
 
 aptly_cron:
   cron.present:
-    - name: "/usr/local/bin/aptly_update.py -s -p -r > /var/log/aptly_update.log 2>&1"
+    - name: "/usr/local/bin/aptly_update.py -s -p -r > {{aptly.log_dir}}/aptly_update.log 2>&1"
     - identifier: aptly_update
     - hour: "{{ aptly.cron.hour }}"
     - minute: "{{ aptly.cron.minute }}"
