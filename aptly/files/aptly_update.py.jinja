@@ -103,7 +103,8 @@ if publish_enabled:
 if cleanup_enabled:
     logger.info('Cleanup')
     try:
-        subprocess.call("aptly-publisher -v --url http://127.0.0.1:{{aptly.api.bind.port}} cleanup", shell=True)
+        for i in range(0,3):
+            subprocess.call("aptly-publisher -v --url http://127.0.0.1:{{aptly.api.bind.port}} cleanup", shell=True)
     except subprocess.CalledProcessError as e:
         logger.error("Failed to cleanup")
         print(e)
