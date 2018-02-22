@@ -52,6 +52,7 @@ aptly_cron_path:
   cron.env_present:
     - name: PATH
     - value: "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+    - user: {{ aptly.user }}
 
 {%- else %}
 
