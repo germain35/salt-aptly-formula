@@ -5,12 +5,20 @@ include:
   - aptly.repo
 {%- endif %}
 
-aptly_packages:
+aptly_requisites_packages:
   pkg.installed:
-    - pkgs: {{ aptly.pkgs }}
+    - pkgs: {{ aptly.req_pkgs }}
+
+aptly_package:
+  pkg.installed:
+    - name: {{ aptly.pkg }}
+    {%- if aptly.version is defined %}
+    - version: {{ aptly.version }}
+    {%- endif %}
     - refresh: True
-    {%- if aptly.manage_repo %}
     - require:
+      - pkg: aptly_requisites_packages
+    {%- if aptly.manage_repo %}
       - sls: aptly.repo
     {%- endif %}
 
@@ -39,7 +47,7 @@ aptly_user:
     - groups:
       - {{ aptly.group }}
     - require:
-      - pkg: aptly_packages
+      - pkg: aptly_package
       - group: aptly_group
     - require_in:
       - file: aptly_home_dir

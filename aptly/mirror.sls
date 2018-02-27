@@ -21,6 +21,8 @@ aptly_mirror_{{mirror}}:
     - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filters') %}-filter="{{ params.filters|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.components|join(' ') }}
     - runas: {{ aptly.user }}
     - unless: aptly mirror show {{ mirror }}
+    - require:
+      - pkg: aptly_package
 
   {%- if params.get('update', False) == True %}
 aptly_mirror_update_{{mirror}}:
@@ -36,6 +38,8 @@ aptly_publish_{{ aptly.mirror[mirror_name].publish }}_snapshot:
   cmd.run:
     - name: aptly publish snapshot -batch=true -gpg-key='{{ aptly.gpg.keypair_id }}' {% if aptly.gpg.get('passphrase', False) %}-passphrase='{{ aptly.gpg.passphrase }}' {% endif %}{{ params.publish }}
     - user: {{ aptly.user }}
+    - require:
+      - pkg: aptly_package
   {%- endif %}
 
 {%- endfor %}
