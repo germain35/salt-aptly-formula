@@ -50,7 +50,7 @@ except subprocess.CalledProcessError as e:
 for mirror in mirrors:
     logger.info('Starting update of mirror %s' % (mirror))
     try:
-        subprocess.call("aptly mirror update -force=true %s" % (mirror), shell=True)
+        subprocess.call("aptly mirror update -force -max-tries=3 %s" % (mirror), shell=True)
     except subprocess.CalledProcessError as e:
         logger.error("Failed to update mirror %s" % (mirror))
         print(e)
