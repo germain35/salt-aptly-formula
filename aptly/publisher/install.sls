@@ -19,12 +19,3 @@ aptly_publisher_packages:
   - pkgs: {{ aptly.publisher_pkgs }}
 
 {%- endif %}
-
-aptly_publish_script:
-  file.managed:
-    - name: /usr/local/bin/aptly_publish_update.sh
-    - source: salt://aptly/files/aptly_publish_update.sh.jinja
-    - template: jinja
-    - user: root
-    - group: root
-    - mode: 755
