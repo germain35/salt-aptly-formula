@@ -4,7 +4,7 @@
 
   {%- if aptly.publisher.get('python_version', False) %}
 
-    {%- set major_version = aptly.publisher.python_version.split('.')[0]|int %}
+    {%- set major_version = aptly.publisher.python_version|string.split('.')[0]|int %}
 
 aptly_publisher_python_pip:
   pkg.installed:
