@@ -61,8 +61,8 @@ if snapshot_enabled:
     current_date = time.strftime("%Y%m%d%H%M%S")
     for snapshot in settings['snapshots']:
         if type(snapshot) is dict:
-            name   = snapshot.keys()[0]
-            params = snapshot.values()[0]
+            name   = list(snapshot.keys())[0]
+            params = list(snapshot.values())[0]
         else:
             name   = snapshot
             params = {}
