@@ -1,5 +1,9 @@
 {%- from "aptly/map.jinja" import aptly with context -%}
+{%- if aptly.publisher.get('python_version', False) -%}
+#!/usr/bin/python{{aptly.publisher.python_version|string}}
+{%- else -%}
 #!/usr/bin/python
+{%- endif -%}
 # -*- coding: utf-8 -*-
 
 import logging
