@@ -15,7 +15,9 @@ aptly:
     service:
       enabled: True
   publisher:
-    pip_install: True
+    python_install: True
+    python_version: 3
+    version: '0.12.11'
   mirrors:
     mirror_name:
       source: http://example.com/debian
