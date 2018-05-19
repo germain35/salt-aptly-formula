@@ -25,7 +25,16 @@ aptly_package:
 aptly_update_script:
   file.managed:
     - name: /usr/local/bin/aptly_update.py
+    {%- if aptly.publisher.get('python_version', False) %}
+      {%- set string_version = aptly.publisher.python_version|string %}
+      {%- set major_version  = string_version.split('.')[0]|int %}
+      {%- if aptly.publisher.python_version == 3 %}
+    - source: salt://aptly/files/aptly_update.py3.jinja
+      {%- else %}
+    - source: salt://aptly/files/aptly_update.py3.jinja
+    {%- else %}
     - source: salt://aptly/files/aptly_update.py.jinja
+    {%- endif %}
     - template: jinja
     - user: {{ aptly.user }}
     - group: {{ aptly.group }}
