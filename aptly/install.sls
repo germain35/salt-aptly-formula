@@ -32,6 +32,7 @@ aptly_update_script:
     - source: salt://aptly/files/aptly_update.py3.jinja
       {%- else %}
     - source: salt://aptly/files/aptly_update.py3.jinja
+      {%- endif %}
     {%- else %}
     - source: salt://aptly/files/aptly_update.py.jinja
     {%- endif %}
