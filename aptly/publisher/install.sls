@@ -7,9 +7,11 @@
     {%- set string_version = aptly.publisher.python_version|string %}
     {%- set major_version  = string_version.split('.')[0]|int %}
 
-aptly_publisher_python_pip:
+aptly_publisher_python_packages:
   pkg.installed:
-    - name: python{{major_version}}-pip
+    - pkgs: 
+      - python{{major_version}}-pip
+      - python{{major_version}}-setuptools
 
 aptly_publisher_packages:
   pip.installed:
@@ -20,19 +22,25 @@ aptly_publisher_packages:
     {%- endif %}
     - bin_env: /usr/bin/pip3
     - require:
-      - pkg: aptly_publisher_python_pip
+      - pkg: aptly_publisher_python_packages
 
   {%- else %}
 
-aptly_publisher_python_pip:
+aptly_publisher_python_packages:
   pkg.installed:
-    - name: python-pip
+    - pkgs: 
+      - python-pip
+      - python-setuptools
 
 aptly_publisher_packages:
   pip.installed:
+    {%- if aptly.publisher.get('version', False) %}
+    - name: python-aptly == {{ aptly.publisher.version }}
+    {%- else %}
     - name: python-aptly
+    {%- endif %}
     - require:
-      - pkg: aptly_publisher_python_pip
+      - pkg: aptly_publisher_python_packages
 
   {%- endif %}
 
