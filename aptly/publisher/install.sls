@@ -12,6 +12,7 @@ aptly_publisher_python_packages:
     - pkgs: 
       - python{{major_version}}-pip
       - python{{major_version}}-setuptools
+    - reload_modules: true
 
 aptly_publisher_packages:
   pip.installed:
@@ -43,6 +44,7 @@ aptly_publisher_python_packages:
     - pkgs: 
       - python-pip
       - python-setuptools
+    - reload_modules: true
 
 aptly_publisher_packages:
   pip.installed:
