@@ -20,6 +20,9 @@ aptly:
   publisher:
     enabled: True
     pip_install: False
+    python:
+      pip:
+        no_index: False
   api:
     bind:
       host: 127.0.0.1

@@ -21,6 +21,18 @@ aptly_publisher_packages:
     - name: python-aptly
     {%- endif %}
     - bin_env: /usr/bin/pip3
+    {%- if aptly.publisher.python.pip.get('no_index', False) %}
+    - no_index: True
+    {%- endif %}
+    {%- if aptly.publisher.python.pip.get('index_url', False) %}
+    - index_url: {{ aptly.publisher.python.pip.index_url }}
+      {%- if aptly.publisher.python.pip.get('trusted_host', False) %}
+    - trusted_host: {{ aptly.publisher.python.pip.trusted_host }}
+      {%- endif %}
+    {%- endif %}
+    {%- if aptly.publisher.python.pip.get('find_links', False) %}
+    - find_links: {{ aptly.publisher.python.pip.find_links }}
+    {%- endif %}
     - require:
       - pkg: aptly_publisher_python_packages
 
@@ -38,6 +50,18 @@ aptly_publisher_packages:
     - name: python-aptly == {{ aptly.publisher.version }}
     {%- else %}
     - name: python-aptly
+    {%- endif %}
+    {%- if aptly.publisher.python.pip.get('no_index', False) %}
+    - no_index: True
+    {%- endif %}
+    {%- if aptly.publisher.python.pip.get('index_url', False) %}
+    - index_url: {{ aptly.publisher.python.pip.index_url }}
+      {%- if aptly.publisher.python.pip.get('trusted_host', False) %}
+    - trusted_host: {{ aptly.publisher.python.pip.trusted_host }}
+      {%- endif %}
+    {%- endif %}
+    {%- if aptly.publisher.python.pip.get('find_links', False) %}
+    - find_links: {{ aptly.publisher.python.pip.find_links }}
     {%- endif %}
     - require:
       - pkg: aptly_publisher_python_packages
