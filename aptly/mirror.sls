@@ -4,7 +4,7 @@ include:
   - aptly.install
   - aptly.config
 
-{%- for mirror, params in aptly.get('mirrors', {}).iteritems() %}
+{%- for mirror, params in aptly.get('mirrors', {}).items() %}
   
   {%- for gpg_key in params.get('gpg_keys', []) %}
 gpg_import_key_{{mirror}}_{{gpg_key}}:

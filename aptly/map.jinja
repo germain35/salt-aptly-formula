@@ -15,7 +15,10 @@ that differ from what is in defaults.yaml
 {% set os_family_map = salt['grains.filter_by']({
     'Debian': {
         'pkg': 'aptly',
-        'req_pkgs': ['bzip2', 'cron', 'python-gnupg', 'graphviz'],
+        'req_pkgs': salt['grains.filter_by']({
+            '3': ['python3-gnupg', 'bzip2', 'cron', 'graphviz'],
+            'default': ['python-gnupg', 'bzip2', 'cron', 'graphviz'],
+        }, grain="pythonversion"),
         'publisher_pkgs': ['aptly-publisher'],
         'bin': '/usr/bin/aptly',
         'home_dir': '/srv/aptly',

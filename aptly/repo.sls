@@ -17,7 +17,7 @@ aptly_gnupg_pkg:
   {%- if 'repo' in aptly and aptly.repo is mapping %}
 aptly_repo:
   pkgrepo.managed:
-    {%- for k, v in aptly.repo.iteritems() %}
+    {%- for k, v in aptly.repo.items() %}
     - {{k}}: {{v}}
     {%- endfor %}
   {%- endif %}

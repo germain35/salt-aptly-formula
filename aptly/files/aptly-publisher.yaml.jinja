@@ -1,7 +1,7 @@
 {%- from "aptly/map.jinja" import aptly with context -%}
 {%- if aptly.repos|default(False) %}
 repo:
-{%- for repo, params in aptly.repos.iteritems() %}
+{%- for repo, params in aptly.repos.items() %}
   {{ repo }}:
     component: {{ params.publisher.component }}
     distributions:
@@ -21,7 +21,7 @@ repo: {}
 
 {%- if aptly.mirrors|default(False) %}
 mirror:
-{%- for mirror, params in aptly.mirrors.iteritems() %}
+{%- for mirror, params in aptly.mirrors.items() %}
   {{ mirror }}:
     component: {{ params.publisher.component }}
     distributions:
@@ -37,8 +37,9 @@ mirror:
 {%- endfor %}
 {%- for snapshot in aptly.get('snapshots', []) %}
   {%- if snapshot is mapping %}
-    {%- set name   = snapshot.keys()[0] %}
-    {%- set params = snapshot.get(name, {}) %}
+    {%- set key_list = snapshot.keys()|list %}
+    {%- set name     = key_list[0] %}
+    {%- set params   = snapshot.get(name, {}) %}
   {%- elif snapshot is list %}
     {%- set name   = snapshot[0] %}
     {%- set params = snapshot[1] %}
