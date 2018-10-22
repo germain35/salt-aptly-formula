@@ -3,7 +3,9 @@
 repo:
 {%- for repo, params in aptly.repos.items() %}
   {{ repo }}:
+    {%- if params.publisher.get('component', False) %}
     component: {{ params.publisher.component }}
+    {%- endif %}
     distributions:
       {%- for distribution in params.publisher.distributions %}
       - {{ distribution }}
@@ -23,7 +25,9 @@ repo: {}
 mirror:
 {%- for mirror, params in aptly.mirrors.items() %}
   {{ mirror }}:
+    {%- if params.publisher.get('component', False) %}
     component: {{ params.publisher.component }}
+    {%- endif %}
     distributions:
       {%- for distribution in params.publisher.distributions %}
       - {{ distribution }}
@@ -49,7 +53,9 @@ mirror:
   {%- endif %}
   {%- if params.publisher is defined %}
   {{ name }}:
+    {%- if params.publisher.get('component', False) %}
     component: {{ params.publisher.component }}
+    {%- endif %}
     distributions:
       {%- for distribution in params.publisher.distributions %}
       - {{ distribution }}
