@@ -3,6 +3,10 @@
 include:
   - aptly.install
 
+aptly_remove_default_conf:
+  file.absent:
+    - name: /home/aptly/.aptly.conf
+
 aptly_conf:
   file.managed:
     - name: {{ aptly.conf_file }}
@@ -26,7 +30,7 @@ aptly_api_conf:
 aptly_update_conf:
   file.serialize:
     - name: {{ aptly.update_conf_file }}
-    - dataset: 
+    - dataset:
         snapshots: {{aptly.get('snapshots', [])}}
     - formatter: yaml
     - user: {{ aptly.user }}

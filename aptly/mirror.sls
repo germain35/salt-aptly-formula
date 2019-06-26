@@ -9,9 +9,9 @@ include:
   {%- for gpg_key in params.get('gpg_keys', []) %}
 gpg_import_key_{{mirror}}_{{gpg_key}}:
   cmd.run:
-    - name: gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ gpg_key }}
+    - name: gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ gpg_key }}
     - runas: {{ aptly.user }}
-    - unless: gpg --no-default-keyring --keyring trustedkeys.gpg -k {{ gpg_key }}
+    - unless: gpg1 --no-default-keyring --keyring trustedkeys.gpg -k {{ gpg_key }}
     - retry:
         attempts: 5
         until: True
@@ -22,9 +22,9 @@ gpg_import_key_{{mirror}}_{{gpg_key}}:
 
 aptly_mirror_{{mirror}}:
   cmd.run:
-    - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('sources', False) %}-with-sources=true {% endif %}{% if params.get('filters') %}-filter="{{ params.filters|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.get('components', [])|join(' ') }}
+    - name: aptly mirror create {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('deps', False) %}-filter-with-deps=true {% endif %}{% if params.get('filters') %}-filter="{{ params.filters|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }} {{ params.source }} {{ params.distribution }} {{ params.get('components', [])|join(' ') }}
     - runas: {{ aptly.user }}
-    - unless: aptly mirror show {{ mirror }}
+    - unless: aptly mirror edit {% if params.get('udebs', False) %}-with-udebs=true {% endif %}{% if params.get('deps', False) %}-filter-with-deps=true {% endif %}{% if params.get('filters') %}-filter="{{ params.filters|join(' | ') }}" {% endif %}-architectures={{ params.architectures|join(',') }} {{ mirror }}
     - require:
       - pkg: aptly_package
 

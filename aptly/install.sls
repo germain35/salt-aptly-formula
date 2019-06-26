@@ -8,6 +8,7 @@ include:
 aptly_requisites_packages:
   pkg.installed:
     - pkgs: {{ aptly.req_pkgs }}
+    - reload_modules: true
 
 aptly_package:
   pkg.installed:
@@ -21,25 +22,6 @@ aptly_package:
     {%- if aptly.manage_repo %}
       - sls: aptly.repo
     {%- endif %}
-
-aptly_update_script:
-  file.managed:
-    - name: /usr/local/bin/aptly_update.py
-    {%- if aptly.publisher.get('python_version', False) %}
-      {%- set string_version = aptly.publisher.python_version|string %}
-      {%- set major_version  = string_version.split('.')[0]|int %}
-      {%- if aptly.publisher.python_version == 3 %}
-    - source: salt://aptly/files/aptly_update.py3.jinja
-      {%- else %}
-    - source: salt://aptly/files/aptly_update.py3.jinja
-      {%- endif %}
-    {%- else %}
-    - source: salt://aptly/files/aptly_update.py.jinja
-    {%- endif %}
-    - template: jinja
-    - user: {{ aptly.user }}
-    - group: {{ aptly.group }}
-    - mode: 755
 
 {%- if aptly.manage_user %}
 
@@ -101,6 +83,25 @@ aptly_pub_dir:
     - require:
       - file: aptly_root_dir
 
+
+aptly_update_script:
+  file.managed:
+    - name: /usr/local/bin/aptly_update.py
+    {%- if aptly.publisher.get('python_version', False) %}
+      {%- set string_version = aptly.publisher.python_version|string %}
+      {%- set major_version  = string_version.split('.')[0]|int %}
+      {%- if aptly.publisher.python_version == 3 %}
+    - source: salt://aptly/files/aptly_update.py3.jinja
+      {%- else %}
+    - source: salt://aptly/files/aptly_update.py3.jinja
+      {%- endif %}
+    {%- else %}
+    - source: salt://aptly/files/aptly_update.py.jinja
+    {%- endif %}
+    - template: jinja
+    - user: {{ aptly.user }}
+    - group: {{ aptly.group }}
+    - mode: 755
 
 {%- if aptly.manage_gpg and aptly.secure %}
 
@@ -164,5 +165,3 @@ aptly_gpg_trust_key:
   {%- endif %}
 
 {%- endif %}
-
-

@@ -11,6 +11,11 @@ import os
 import shutil
 import yaml
 
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 logging_format = '%(levelname)-8s %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=logging_format)
 logger = logging.getLogger('aptly')
@@ -34,8 +39,8 @@ for opt, arg in opts:
 
 try:
   with open(config, 'r') as stream:
-    settings = yaml.load(stream)
-except IOError as e: 
+    settings = yaml.load(stream, Loader=Loader)
+except IOError as e:
     logger.error("Error reading config file: %s" % (config))
     print(e)
     sys.exit(1)
@@ -71,7 +76,7 @@ if snapshot_enabled:
 
         try:
             logger.info("Create snapshot %s" % (timestamp_name))
-            if 'mirror' in params.keys(): 
+            if 'mirror' in params.keys():
                 subprocess.call("aptly snapshot create %s from mirror %s" % (timestamp_name, params['mirror']), shell=True)
             elif 'filters' in params.keys() and 'source' in params.keys():
                 if 'deps' in params.keys() and params['deps']:
@@ -94,7 +99,7 @@ if snapshot_enabled:
 if publish_enabled:
     logger.info("Publish")
     try:
-        subprocess.call("aptly-publisher --timeout 1800 -v --url http://127.0.0.1:{{aptly.api.bind.port}} --architectures amd64 -- publish", shell=True)
+        subprocess.call("aptly-publisher --timeout 1800 -v --url http://127.0.0.1:{{aptly.api.bind.port}} --architectures amd64 --force-overwrite -- publish", shell=True)
     except subprocess.CalledProcessError as e:
         logger.error("Failed to publish")
         print(e)

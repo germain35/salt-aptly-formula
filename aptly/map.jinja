@@ -15,11 +15,9 @@ that differ from what is in defaults.yaml
 {% set os_family_map = salt['grains.filter_by']({
     'Debian': {
         'pkg': 'aptly',
-        'req_pkgs': salt['grains.filter_by']({
-            '3': ['python3-gnupg', 'bzip2', 'cron', 'graphviz'],
-            'default': ['python-gnupg', 'bzip2', 'cron', 'graphviz'],
-        }, grain="pythonversion"),
-        'publisher_pkgs': ['aptly-publisher'],
+        'req_pkgs': ['python-pip', 'python3-pip', 'python-setuptools', 'python3-setuptools', 'python-gnupg', 'python3-gnupg', 'gpgv1', 'bzip2', 'cron', 'graphviz'],
+        'publisher_pkg': 'aptly-publisher',
+        'publisher_req_pkgs': ['python-pip', 'python3-pip', 'python-setuptools', 'python3-setuptools'],
         'bin': '/usr/bin/aptly',
         'home_dir': '/srv/aptly',
         'root_dir': '/var/lib/aptly',
@@ -34,8 +32,7 @@ that differ from what is in defaults.yaml
             'humanname': 'aptly',
             'name': 'deb http://repo.aptly.info/ squeeze main',
             'file': '/etc/apt/sources.list.d/aptly.list',
-            'keyserver': 'hkp://keys.gnupg.net:80',
-            'keyid': '9E3E53F19C7DE460',
+            'key_url': 'https://www.aptly.info/pubkey.txt',
         },
     },
 }
