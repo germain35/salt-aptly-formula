@@ -4,12 +4,17 @@ include:
   - aptly.install
   - aptly.config
 
+gpg_import_os_keyrings:
+  cmd.run:
+    - name: gpg1 --no-default-keyring --keyring /usr/share/keyrings/{{salt['grains.get']('os')|lower}}-archive-keyring.gpg --export | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+    - runas: {{ aptly.user }}
+
 {%- for mirror, params in aptly.get('mirrors', {}).items() %}
 
   {%- for gpg_key in params.get('gpg_keys', []) %}
 gpg_import_key_{{mirror}}_{{gpg_key}}:
   cmd.run:
-    - name: gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver {{ aptly.gpg.keyserver }} --recv-keys {{ gpg_key }}
+    - name: gpg1 --no-default-keyring --keyring trustedkeys.gpg --recv-keys {{ gpg_key }}
     - runas: {{ aptly.user }}
     - unless: gpg1 --no-default-keyring --keyring trustedkeys.gpg -k {{ gpg_key }}
     - retry:

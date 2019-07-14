@@ -15,7 +15,7 @@ that differ from what is in defaults.yaml
 {% set os_family_map = salt['grains.filter_by']({
     'Debian': {
         'pkg': 'aptly',
-        'req_pkgs': ['python-pip', 'python3-pip', 'python-setuptools', 'python3-setuptools', 'python-gnupg', 'python3-gnupg', 'gpgv1', 'bzip2', 'cron', 'graphviz'],
+        'req_pkgs': ['python-pip', 'python3-pip', 'python-setuptools', 'python3-setuptools', 'python-gnupg', 'python3-gnupg', 'gnupg1', 'gnupg2', 'gpgv1', 'gpgv2', 'bzip2', 'cron', 'graphviz'],
         'publisher_pkg': 'aptly-publisher',
         'publisher_req_pkgs': ['python-pip', 'python3-pip', 'python-setuptools', 'python3-setuptools'],
         'bin': '/usr/bin/aptly',
